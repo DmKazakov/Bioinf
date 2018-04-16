@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Bioinf.iml" filepath="$PROJECT_DIR$/.idea/modules/Bioinf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Bioinf_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Bioinf_main.iml" group="Bioinf" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Bioinf_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Bioinf_test.iml" group="Bioinf" />
+    </modules>
+  </component>
+</project>
