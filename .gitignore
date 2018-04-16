@@ -62,5 +62,9 @@ fabric.properties
 # Cache of project
 **/.gradletasknamecache
 
+.idea/vcs.xml
+src/main/resources/cid
+src/main/resources/hcd
+
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties

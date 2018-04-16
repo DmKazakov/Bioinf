@@ -1,35 +1,61 @@
 package ru.spbau.mit.kazakov.Bioinf;
 
+import javafx.util.Pair;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Bioinf {
     private static final String HCD_SCANS_RES_FILE = "120706O2c1_LZ-MvD-0297-MabCampth-trypsin_007.mzXML.txt";
     private static final String CID_SCANS_RES_FILE = "120706O2c1_LZ-MvD-0297-MabCampth-trypsin_007.mzXML.CID.txt";
     private static final String SCANS_DESC_FILE = "120706O2c1_LZ-MvD-0297-MabCampth-trypsin_007.mzXML.good.msalign";
     private static final String CHAINS_FILE = "Mab.fasta";
+    private static final String HCD_ANALYSIS_FILE = "hcd";
+    private static final String CID_ANALYSIS_FILE = "cid";
     private static final String RESOURCES_FOLDER = "src/main/resources/";
+
     private static int NUMBER_OF_HCD_TRIES = 2;
     private static int NUMBER_OF_CID_TRIES = 30;
+
+    private static final Pattern activationPattern = Pattern.compile("ACTIVATION=(...)");
+    private static final Pattern scanNumberPattern = Pattern.compile("SCANS=(\\d+)");
+    private static final Pattern precursorMassPattern = Pattern.compile("PRECURSOR_MASS=(\\d+\\.\\d+)");
+    private static final double epsilon = 0.0001;
+
     private static Map<Integer, Scan> scans = new HashMap<>();
+    private static List<Pair<Scan, Scan>> pairs = new ArrayList<>();
 
     private static String heavyChain;
     private static String lightChain;
 
 
     public static void main(String[] args) throws IOException {
-        readScanResFile(RESOURCES_FOLDER + HCD_SCANS_RES_FILE);
-        readScanDescFile();
         readChainFile();
 
+        readScanResFile(RESOURCES_FOLDER + HCD_SCANS_RES_FILE);
+        readScanDescFile();
+        printAnalysis(NUMBER_OF_CID_TRIES, NUMBER_OF_HCD_TRIES, HCD_ANALYSIS_FILE);
+
+        scans.clear();
+        pairs.clear();
+        readScanResFile(RESOURCES_FOLDER + CID_SCANS_RES_FILE);
+        readScanDescFile();
+        printAnalysis(2, 2, CID_ANALYSIS_FILE);
+
+    }
+
+    private static void printAnalysis(int numberOfCidTries, int numberOfHcdTries, String file) throws FileNotFoundException {
         List<String> HCDrecognized = new ArrayList<>();
         List<String> CIDrecognized = new ArrayList<>();
         for (Scan scan : scans.values()) {
-            int numberOfTries = scan.getActivation() == Activation.CID ? NUMBER_OF_CID_TRIES : NUMBER_OF_HCD_TRIES;
+            int numberOfTries = scan.getActivation() == Activation.CID ? numberOfCidTries : numberOfHcdTries;
             for (int i = 0; i < Math.min(numberOfTries + 1, scan.getSequences().size()); i++) {
                 Sequence sequence = scan.getSequences().get(i);
                 if (isSubstring(lightChain, sequence.getSequence()) || isSubstring(heavyChain, sequence.getSequence())) {
@@ -42,13 +68,39 @@ public class Bioinf {
             }
         }
 
-        System.out.println("HCD:");
-        for (String sequence : HCDrecognized) {
-            System.out.println(sequence);
+        try (PrintWriter hcdWriter = new PrintWriter(RESOURCES_FOLDER + file)) {
+            hcdWriter.println("HCD:");
+            printList(hcdWriter, HCDrecognized);
+
+            hcdWriter.println();
+            hcdWriter.println("CID:");
+            printList(hcdWriter, CIDrecognized);
+
+            hcdWriter.println();
+            printPairs(hcdWriter);
         }
-        System.out.println("\nCID:");
-        for (String sequence : CIDrecognized) {
-            System.out.println(sequence);
+    }
+
+    private static void printPairs(PrintWriter out) {
+        out.println("Pairs:");
+        for(Pair<Scan, Scan> pair : pairs) {
+            if (!pair.getKey().getSequences().isEmpty() && !pair.getValue().getSequences().isEmpty()) {
+                String sequence = pair.getKey().getSequences().get(0).getSequence();
+                if (sequence.equals(pair.getValue().getSequences().get(0).getSequence())) {
+                    out.println();
+                    out.println("SCAN_1: " + pair.getKey().getNumber());
+                    out.println("SCAN_2: " + pair.getValue().getNumber());
+                    out.println("Sequence: " + sequence);
+                    out.println("RnkScr_1: " + pair.getKey().getSequences().get(0).getRnkScr());
+                    out.println("RnkScr_1: " + pair.getValue().getSequences().get(0).getRnkScr());
+                }
+            }
+        }
+    }
+    
+    private static void printList(PrintWriter out, List<String> list) {
+        for (String string : list) {
+            out.println(string);
         }
     }
 
@@ -108,6 +160,7 @@ public class Bioinf {
         }
     }
 
+    @NotNull
     private static Sequence parseSequenceDesc(@NotNull String sequenceDesc) {
         String[] desc = sequenceDesc.split("\\s");
         return new Sequence(desc[7], Double.parseDouble(desc[1]));
@@ -115,10 +168,26 @@ public class Bioinf {
 
     private static void parseScanDesc(@NotNull String scanDesc) {
         String[] parameters = scanDesc.trim().split("\\n");
-        int num = Integer.parseInt(parameters[2].substring(6, parameters[2].length() - 1));
-        String activation = parameters[3].substring(11, parameters[3].length() - 1);
+
+        Matcher numMatcher = scanNumberPattern.matcher(parameters[2]);
+        numMatcher.find();
+        int num = Integer.parseInt(numMatcher.group(1));
+
+        Matcher activationMatcher = activationPattern.matcher(parameters[3]);
+        activationMatcher.find();
+        String activation = activationMatcher.group(1);
+
+        Matcher massMatcher = precursorMassPattern.matcher(parameters[6]);
+        massMatcher.find();
+        double mass = Double.parseDouble(massMatcher.group(1));
 
         scans.get(num).setActivation(Activation.getActivationByString(activation));
+        scans.get(num).setPrecursorMass(mass);
+
+        Scan pair = scans.get(num - 1);
+        if (pair != null && Math.abs(pair.getPrecursorMass() - mass) <= epsilon) {
+            pairs.add(new Pair<>(pair, scans.get(num)));
+        }
     }
 
     private static boolean isSubstring(@NotNull String string, @NotNull String substring) {
