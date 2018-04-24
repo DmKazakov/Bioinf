@@ -1,0 +1,243 @@
+HCD light chain (2 interpretations, 53.7% coverage):
+DIQMTQSPSSLSASVGDRVTITCKASQNIDKYLNWYQQKPGKAPKLLIYNTNNLQTGVPSRFSGSGSGTDFTFTISSLQPEDIATYYCLQHISRPRTFGQGTKVEIKRTVAAPSVFIFPPSDEQLKSGTASVVCLLNNFYPREAKVQWKVDNALQSGNSQESVTEQDSKDSTYSLSSTLTLSKADYEKHKVYACEVTHQGLSSPVTKSFNRGEC
+  QMTQSPSSLSASV
+   MTQSPSSLSASV
+    TQSPSSL(2)
+      SPSSLSA(5)
+       PSSLSAS(3)
+        SSLSASV(4)
+          LSASVGD(9)
+                                   YQQKPGK(5)
+                                      KPGKAPK(2)
+                                                YNTNNLQT(2)
+                                                  TNNLQTG
+                                                      QTGVPSR(3)
+                                                                                                TFGQGTKV(2)
+                                                                                                                              SGTASVV
+                                                                                                                                    VCLLNNFY(3)
+                                                                                                                                      LLNNFYP
+                                                                                                                                       LNNFYPR(2)
+                                                                                                                                                           SGNSQESVTEQ
+                                                                                                                                                                ESVTEQD
+                                                                                                                                                                 SVTEQDSK
+                                                                                                                                                                         DSTYSLSSTL
+                                                                                                                                                                          STYSLSSTLT(2)
+                                                                                                                                                                            YSLSSTLTL(2)
+                                                                                                                                                                             SLSSTLT(20)
+                                                                                                                                                                              LSSTLTL
+                                                                                                                                                                               SSTLTLSKA(2)
+                                                                                                                                                                                STLTLSK(4)
+                                                                                                                                                                                              VYACEVT
+                                                                                                                                                                                                ACEVTHQ
+                                                                                                                                                                                                  EVTHQGLSSPVTK(3)
+                                                                                                                                                                                                   VTHQGLSSPVTK(6)
+                                                                                                                                                                                                    THQGLSS(11)
+                                                                                                                                                                                                     HQGLSSP(5)
+                                                                                                                                                                                                      QGLSSPVTK(10)
+                                                                                                                                                                                                       GLSSPVTK(26)
+                                                                                                                                                                                                        LSSPVTK(6)
+                                                                                                                                                                                                               SFNRGEC
+
+HCD heavy chain (2 interpretations, 27.5% coverage):
+QVQLQESGPGLVRPSQTLSLTCTVSGFTFTDFYMNWVRQPPGRGLEWIGFIRDKAKGYTTEYNPSVKGRVTMLVDTSKNQFSLRLSSVTAADTAVYYCAREGHTAAPFDYWGQGSLVTVSSASTKGPSVFPLAPSSKSTSGGTAALGCLVKDYFPEPVTVSWNSGALTSGVHTFPAVLQSSGLYSLSSVVTVPSSSLGTQTYICNVNHKPSNTKVDKKVEPKSCDKTHTCPPCPAPELLGGPSVFLFPPKPKDTLMISRTPEVTCVVVDVSHEDPEVKFNWYVDGVEVHNAKTKPREEQYNSTYRVVSVLTVLHQDWLNGKEYKCKVSNKALPAPIEKTISKAKGQPREPQVYTLPPSRDELTKNQVSLTCLVKGFYPSDIAVEWESNGQPENNYKTTPPVLDSDGSFFLYSKLTVDKSRWQQGNVFSCSVMHEALHNHYTQKSLSLSPGK
+                                                                       MLVDTSK(5)
+                                                                        LVDTSKNQFSLR(8)
+                                                                         VDTSKNQFSLR(3)
+                                                                           TSKNQFSLR
+                                                                            SKNQFSLR
+                                                                             KNQFSLR
+                                                                                      SVTAADT
+                                                                                       VTAADTAVY(4)
+                                                                                        TAADTAV(5)
+                                                                                         AADTAVY(2)
+                                                                                            TAVYYCAR
+                                                                                             AVYYCAR
+                                                                                                               GQGSLVTVSSA
+                                                                                                                 GSLVTVS(2)
+                                                                                                                  SLVTVSSA(7)
+                                                                                                                   LVTVSSA(3)
+                                                                                                                    VTVSSAS(2)
+                                                                                                                     TVSSASTK
+                                                                                                                      VSSASTK(5)
+                                                                                                                                 FPLAPSSK
+                                                                                                                                  PLAPSSK(15)
+                                                                                                                                                                                                                                             LLGGPSVFL
+                                                                                                                                                                                                                                              LGGPSVFLF(2)
+                                                                                                                                                                                                                                               GGPSVFL(2)
+                                                                                                                                                                                                                                                GPSVFLF(5)
+                                                                                                                                                                                                                                                 PSVFLFP
+                                                                                                                                                                                                                                                    FLFPPKPK
+                                                                                                                                                                                                                                                     LFPPKPK(15)
+                                                                                                                                                                                                                                                      FPPKPKD(4)
+                                                                                                                                                                                                                                                                         VVVDVSHED
+                                                                                                                                                                                                                                                                          VVDVSHED(2)
+                                                                                                                                                                                                                                                                           VDVSHED(3)
+                                                                                                                                                                                                                                                                             VSHEDPE
+                                                                                                                                                                                                                                                                               HEDPEVK
+                                                                                                                                                                                                                                                                                         YVDGVEV(25)
+                                                                                                                                                                                                                                                                                          VDGVEVH(18)
+                                                                                                                                                                                                                                                                                                                             LNGKEYK(10)
+                                                                                                                                                                                                                                                                                                                                                                               SLTCLVK
+                                                                                                                                                                                                                                                                                                                                                                                                     QPENNYK
+                                                                                                                                                                                                                                                                                                                                                                                                                             LTVDKSR
+                                                                                                                                                                                                                                                                                                                                                                                                                                                 EALHNHY
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    HNHYTQK
+
+CID light chain (2 interpretations, 0.0% coverage):
+DIQMTQSPSSLSASVGDRVTITCKASQNIDKYLNWYQQKPGKAPKLLIYNTNNLQTGVPSRFSGSGSGTDFTFTISSLQPEDIATYYCLQHISRPRTFGQGTKVEIKRTVAAPSVFIFPPSDEQLKSGTASVVCLLNNFYPREAKVQWKVDNALQSGNSQESVTEQDSKDSTYSLSSTLTLSKADYEKHKVYACEVTHQGLSSPVTKSFNRGEC
+
+CID heavy chain (2 interpretations, 0.0% coverage):
+QVQLQESGPGLVRPSQTLSLTCTVSGFTFTDFYMNWVRQPPGRGLEWIGFIRDKAKGYTTEYNPSVKGRVTMLVDTSKNQFSLRLSSVTAADTAVYYCAREGHTAAPFDYWGQGSLVTVSSASTKGPSVFPLAPSSKSTSGGTAALGCLVKDYFPEPVTVSWNSGALTSGVHTFPAVLQSSGLYSLSSVVTVPSSSLGTQTYICNVNHKPSNTKVDKKVEPKSCDKTHTCPPCPAPELLGGPSVFLFPPKPKDTLMISRTPEVTCVVVDVSHEDPEVKFNWYVDGVEVHNAKTKPREEQYNSTYRVVSVLTVLHQDWLNGKEYKCKVSNKALPAPIEKTISKAKGQPREPQVYTLPPSRDELTKNQVSLTCLVKGFYPSDIAVEWESNGQPENNYKTTPPVLDSDGSFFLYSKLTVDKSRWQQGNVFSCSVMHEALHNHYTQKSLSLSPGK
+
+
+HCD light chain (20 interpretations, 57.9% coverage):
+DIQMTQSPSSLSASVGDRVTITCKASQNIDKYLNWYQQKPGKAPKLLIYNTNNLQTGVPSRFSGSGSGTDFTFTISSLQPEDIATYYCLQHISRPRTFGQGTKVEIKRTVAAPSVFIFPPSDEQLKSGTASVVCLLNNFYPREAKVQWKVDNALQSGNSQESVTEQDSKDSTYSLSSTLTLSKADYEKHKVYACEVTHQGLSSPVTKSFNRGEC
+  QMTQSPSSLSASV(3)
+   MTQSPSSLSASV
+    TQSPSSL(16)
+     QSPSSLSA(8)
+      SPSSLSA(12)
+       PSSLSAS(9)
+        SSLSASV(6)
+         SLSASVGDR(4)
+          LSASVGD(15)
+                                  WYQQKPGK
+                                   YQQKPGKAPK(8)
+                                    QQKPGKAPK(3)
+                                     QKPGKAPK(2)
+                                      KPGKAPK(11)
+                                                YNTNNLQT(3)
+                                                 NTNNLQTGV
+                                                  TNNLQTG(3)
+                                                    NLQTGVPSR
+                                                     LQTGVPSR
+                                                      QTGVPSR(13)
+                                                                                                TFGQGTKV(4)
+                                                                                                 FGQGTKVE(2)
+                                                                                                  GQGTKVE(2)
+                                                                                                                              SGTASVV(4)
+                                                                                                                               GTASVVCL(2)
+                                                                                                                                TASVVCLL
+                                                                                                                                 ASVVCLL
+                                                                                                                                  SVVCLLNNFY
+                                                                                                                                   VVCLLNNFY
+                                                                                                                                    VCLLNNFY(6)
+                                                                                                                                     CLLNNFY(6)
+                                                                                                                                      LLNNFYP(3)
+                                                                                                                                       LNNFYPR(2)
+                                                                                                                                                           SGNSQESVTEQ(3)
+                                                                                                                                                            GNSQESVTEQ(2)
+                                                                                                                                                                ESVTEQD(3)
+                                                                                                                                                                 SVTEQDSK(2)
+                                                                                                                                                                  VTEQDSK(3)
+                                                                                                                                                                         DSTYSLSSTL(7)
+                                                                                                                                                                          STYSLSSTLT(3)
+                                                                                                                                                                           TYSLSSTLTL
+                                                                                                                                                                            YSLSSTLTL(2)
+                                                                                                                                                                             SLSSTLT(40)
+                                                                                                                                                                              LSSTLTLSK(2)
+                                                                                                                                                                               SSTLTLSK(10)
+                                                                                                                                                                                STLTLSK(13)
+                                                                                                                                                                                     SKADYEK(4)
+                                                                                                                                                                                       ADYEKHK(2)
+                                                                                                                                                                                              VYACEVT(4)
+                                                                                                                                                                                                ACEVTHQ(4)
+                                                                                                                                                                                                 CEVTHQGLSSPVTK
+                                                                                                                                                                                                  EVTHQGLSSPVTK(7)
+                                                                                                                                                                                                   VTHQGLSSPVTK(20)
+                                                                                                                                                                                                    THQGLSS(33)
+                                                                                                                                                                                                     HQGLSSP(22)
+                                                                                                                                                                                                      QGLSSPVTK(41)
+                                                                                                                                                                                                       GLSSPVTK(81)
+                                                                                                                                                                                                        LSSPVTK(14)
+                                                                                                                                                                                                               SFNRGEC
+
+HCD heavy chain (20 interpretations, 38.1% coverage):
+QVQLQESGPGLVRPSQTLSLTCTVSGFTFTDFYMNWVRQPPGRGLEWIGFIRDKAKGYTTEYNPSVKGRVTMLVDTSKNQFSLRLSSVTAADTAVYYCAREGHTAAPFDYWGQGSLVTVSSASTKGPSVFPLAPSSKSTSGGTAALGCLVKDYFPEPVTVSWNSGALTSGVHTFPAVLQSSGLYSLSSVVTVPSSSLGTQTYICNVNHKPSNTKVDKKVEPKSCDKTHTCPPCPAPELLGGPSVFLFPPKPKDTLMISRTPEVTCVVVDVSHEDPEVKFNWYVDGVEVHNAKTKPREEQYNSTYRVVSVLTVLHQDWLNGKEYKCKVSNKALPAPIEKTISKAKGQPREPQVYTLPPSRDELTKNQVSLTCLVKGFYPSDIAVEWESNGQPENNYKTTPPVLDSDGSFFLYSKLTVDKSRWQQGNVFSCSVMHEALHNHYTQKSLSLSPGK
+                                                            EYNPSVKGR
+                                                             YNPSVKGR
+                                                              NPSVKGR
+                                                                     VTMLVDTSKNQFSLR
+                                                                      TMLVDTSK(2)
+                                                                       MLVDTSK(12)
+                                                                        LVDTSKNQFSLR(16)
+                                                                         VDTSKNQFSLR(14)
+                                                                          DTSKNQFSLR(5)
+                                                                           TSKNQFSLR(4)
+                                                                            SKNQFSLR(4)
+                                                                             KNQFSLR
+                                                                                    LSSVTAADT(3)
+                                                                                      SVTAADTAVY(11)
+                                                                                       VTAADTAVY(7)
+                                                                                        TAADTAV(15)
+                                                                                         AADTAVY(8)
+                                                                                          ADTAVYYCAR(2)
+                                                                                           DTAVYYCAR
+                                                                                            TAVYYCAR(3)
+                                                                                             AVYYCAR(2)
+                                                                                                               GQGSLVT(8)
+                                                                                                                QGSLVTVS(2)
+                                                                                                                 GSLVTVS(12)
+                                                                                                                  SLVTVSSA(9)
+                                                                                                                   LVTVSSASTK(7)
+                                                                                                                    VTVSSAS(8)
+                                                                                                                     TVSSASTK(5)
+                                                                                                                      VSSASTK(17)
+                                                                                                                                 FPLAPSSK(21)
+                                                                                                                                  PLAPSSK(24)
+                                                                                                                                           SGGTAAL
+                                                                                                                                                                                                                       DKKVEPK
+                                                                                                                                                                                                                                             LLGGPSVFL(4)
+                                                                                                                                                                                                                                              LGGPSVFLF(9)
+                                                                                                                                                                                                                                               GGPSVFLF(15)
+                                                                                                                                                                                                                                                GPSVFLF(21)
+                                                                                                                                                                                                                                                 PSVFLFP(10)
+                                                                                                                                                                                                                                                  SVFLFPP(5)
+                                                                                                                                                                                                                                                   VFLFPPKPK
+                                                                                                                                                                                                                                                    FLFPPKPK(14)
+                                                                                                                                                                                                                                                     LFPPKPK(25)
+                                                                                                                                                                                                                                                      FPPKPKD(5)
+                                                                                                                                                                                                                                                       PPKPKDTL(3)
+                                                                                                                                                                                                                                                                         VVVDVSHEDPEVK(2)
+                                                                                                                                                                                                                                                                          VVDVSHED(2)
+                                                                                                                                                                                                                                                                           VDVSHED(9)
+                                                                                                                                                                                                                                                                            DVSHEDPEVK(2)
+                                                                                                                                                                                                                                                                             VSHEDPE(3)
+                                                                                                                                                                                                                                                                              SHEDPEV(2)
+                                                                                                                                                                                                                                                                               HEDPEVK(8)
+                                                                                                                                                                                                                                                                                         YVDGVEV(42)
+                                                                                                                                                                                                                                                                                          VDGVEVH(32)
+                                                                                                                                                                                                                                                                                            GVEVHNAK(3)
+                                                                                                                                                                                                                                                                                             VEVHNAK(8)
+                                                                                                                                                                                                                                                                                                                           DWLNGKE(3)
+                                                                                                                                                                                                                                                                                                                            WLNGKEYK(5)
+                                                                                                                                                                                                                                                                                                                             LNGKEYK(18)
+                                                                                                                                                                                                                                                                                                                              NGKEYKCK(4)
+                                                                                                                                                                                                                                                                                                                               GKEYKCK(12)
+                                                                                                                                                                                                                                                                                                                                       SNKALPA
+                                                                                                                                                                                                                                                                                                                                                                            NQVSLTC(2)
+                                                                                                                                                                                                                                                                                                                                                                              VSLTCLV(7)
+                                                                                                                                                                                                                                                                                                                                                                               SLTCLVK(4)
+                                                                                                                                                                                                                                                                                                                                                                                                   NGQPENN(2)
+                                                                                                                                                                                                                                                                                                                                                                                                    GQPENNYK
+                                                                                                                                                                                                                                                                                                                                                                                                     QPENNYK(3)
+                                                                                                                                                                                                                                                                                                                                                                                                                             LTVDKSR
+                                                                                                                                                                                                                                                                                                                                                                                                                                                 EALHNHY
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    HNHYTQK(5)
+
+CID light chain (20 interpretations, 0.0% coverage):
+DIQMTQSPSSLSASVGDRVTITCKASQNIDKYLNWYQQKPGKAPKLLIYNTNNLQTGVPSRFSGSGSGTDFTFTISSLQPEDIATYYCLQHISRPRTFGQGTKVEIKRTVAAPSVFIFPPSDEQLKSGTASVVCLLNNFYPREAKVQWKVDNALQSGNSQESVTEQDSKDSTYSLSSTLTLSKADYEKHKVYACEVTHQGLSSPVTKSFNRGEC
+
+CID heavy chain (20 interpretations, 0.0% coverage):
+QVQLQESGPGLVRPSQTLSLTCTVSGFTFTDFYMNWVRQPPGRGLEWIGFIRDKAKGYTTEYNPSVKGRVTMLVDTSKNQFSLRLSSVTAADTAVYYCAREGHTAAPFDYWGQGSLVTVSSASTKGPSVFPLAPSSKSTSGGTAALGCLVKDYFPEPVTVSWNSGALTSGVHTFPAVLQSSGLYSLSSVVTVPSSSLGTQTYICNVNHKPSNTKVDKKVEPKSCDKTHTCPPCPAPELLGGPSVFLFPPKPKDTLMISRTPEVTCVVVDVSHEDPEVKFNWYVDGVEVHNAKTKPREEQYNSTYRVVSVLTVLHQDWLNGKEYKCKVSNKALPAPIEKTISKAKGQPREPQVYTLPPSRDELTKNQVSLTCLVKGFYPSDIAVEWESNGQPENNYKTTPPVLDSDGSFFLYSKLTVDKSRWQQGNVFSCSVMHEALHNHYTQKSLSLSPGK
+
+
+HCD: 21.9% of correct first interpretations
+CID: 0.0% of correct first interpretations
+
+
+1 Pairs:
+
+2 Pairs:
+
+20 Pairs:
