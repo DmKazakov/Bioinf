@@ -1,5 +1,6 @@
 package ru.spbau.mit.kazakov.Bioinf;
 
+import com.google.common.collect.Sets;
 import javafx.util.Pair;
 import org.apache.commons.collections4.Bag;
 import org.apache.commons.collections4.bag.TreeBag;
@@ -15,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static ru.spbau.mit.kazakov.Bioinf.Activation.CID;
+import static ru.spbau.mit.kazakov.Bioinf.Activation.HCD;
+
 public class Bioinf {
     private static final String SCANS_RES_FILE = "120706O2c1_LZ-MvD-0297-MabCampth-trypsin_007.mzXML.txt";
     private static final String CID_SCANS_RES_FILE = "120706O2c1_LZ-MvD-0297-MabCampth-trypsin_007.mzXML.CID.txt";
@@ -24,17 +28,20 @@ public class Bioinf {
     private static final String FIRST_ANALYSIS_FILE = "1";
     private static final String SECOND_ANALYSIS_FILE = "2";
     private static final String THIRD_ANALYSIS_FILE = "3";
+    private static final String GENERAL_STAT_FILE = "general";
     private static final String RESOURCES_FOLDER = "src/main/resources/";
 
     private static int ALL = 20;
+    private static int DIFF = 10;
 
     private static final Pattern activationPattern = Pattern.compile("ACTIVATION=(...)");
     private static final Pattern scanNumberPattern = Pattern.compile("SCANS=(\\d+)");
     private static final Pattern precursorMassPattern = Pattern.compile("PRECURSOR_MASS=(\\d+\\.\\d+)");
-    private static final double epsilon = 0.0001;
+    private static final double EPSILON = 0.0001;
 
     private static Map<Integer, Scan> scans = new HashMap<>();
     private static List<Pair<Scan, Scan>> pairs = new ArrayList<>();
+    private static List<Set<Scan>> peptide = new ArrayList<>();
 
     private static String heavyChain;
     private static String lightChain;
@@ -45,19 +52,24 @@ public class Bioinf {
 
         readScanResFile(RESOURCES_FOLDER + SCANS_RES_FILE);
         readScanDescFile();
+        savePeptide();
         Pair<Coverage, Coverage> firstFile = printStat(FIRST_ANALYSIS_FILE);
 
         scans.clear();
         pairs.clear();
         readScanResFile(RESOURCES_FOLDER + CID_SCANS_RES_FILE);
         readScanDescFile();
+        savePeptide();
         Pair<Coverage, Coverage> secondFile = printStat(SECOND_ANALYSIS_FILE);
 
         scans.clear();
         pairs.clear();
         readScanResFile(RESOURCES_FOLDER + HCD_SCANS_RES_FILE);
         readScanDescFile();
+        savePeptide();
         Pair<Coverage, Coverage> thirdFile = printStat(THIRD_ANALYSIS_FILE);
+
+        printGeneralStat();
 
         System.out.println("1 file, HCD 20: " + firstFile.getValue().getHcdHeavyChain());
         System.out.println("1 file, HCD 02: " + firstFile.getKey().getHcdHeavyChain());
@@ -85,6 +97,233 @@ public class Bioinf {
         System.out.println("2 file, CID 02: " + secondFile.getKey().getCidLightChain());
         System.out.println("3 file, CID 20: " + thirdFile.getValue().getCidLightChain());
         System.out.println("3 file, CID 02: " + thirdFile.getKey().getCidLightChain());
+    }
+
+    private static void printGeneralStat() throws FileNotFoundException {
+        List<Set<String>> peptide = new ArrayList<>();
+        for (int i = 0; i < Bioinf.peptide.size(); i++) {
+            peptide.add(Bioinf.peptide.get(i).stream().filter(s -> !s.getSequences().isEmpty())
+                    .flatMap(s -> s.getSequences().stream()).map(Sequence::getSequence).collect(Collectors.toSet()));
+        }
+
+        List<Set<String>> hcdPeptide = new ArrayList<>();
+        for (int i = 0; i < Bioinf.peptide.size(); i++) {
+            hcdPeptide.add(Bioinf.peptide.get(i).stream().filter(s -> !s.getSequences().isEmpty() && s.getActivation().equals(HCD))
+                    .flatMap(s -> s.getSequences().stream()).map(Sequence::getSequence).collect(Collectors.toSet()));
+        }
+
+        List<Set<String>> cidPeptide = new ArrayList<>();
+        for (int i = 0; i < Bioinf.peptide.size(); i++) {
+            cidPeptide.add(Bioinf.peptide.get(i).stream().filter(s -> !s.getSequences().isEmpty() && s.getActivation().equals(CID))
+                    .flatMap(s -> s.getSequences().stream()).map(Sequence::getSequence).collect(Collectors.toSet()));
+        }
+
+        List<Bag<Pair<Integer, String>>> heavyChainCoverages = new ArrayList<>();
+        List<Bag<Pair<Integer, String>>> lightChainCoverages = new ArrayList<>();
+        for (int i = 0; i < peptide.size(); i++) {
+            Set<String> union = new HashSet<>();
+            for (int j = 0; j < peptide.size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+                union = Sets.union(union, peptide.get(j));
+            }
+            Set<String> diff = Sets.difference(hcdPeptide.get(i), union);
+            heavyChainCoverages.add(getAppearancesFromSet(diff, heavyChain));
+            lightChainCoverages.add(getAppearancesFromSet(diff, lightChain));
+            diff = Sets.difference(cidPeptide.get(i), union);
+            heavyChainCoverages.add(getAppearancesFromSet(diff, heavyChain));
+            lightChainCoverages.add(getAppearancesFromSet(diff, lightChain));
+        }
+
+        try (PrintWriter writer = new PrintWriter(RESOURCES_FOLDER + GENERAL_STAT_FILE)) {
+            for (int i = 0; i < lightChainCoverages.size(); i += 2) {
+                System.out.print((i / 2 + 1) + " file, HCD: ");
+                System.out.println(highlightCoverage(getCoverage(lightChainCoverages.get(i), lightChain.length()), lightChain));
+                System.out.print((i / 2 + 1) + " file, CID: ");
+                System.out.println(highlightCoverage(getCoverage(lightChainCoverages.get(i + 1), lightChain.length()), lightChain));
+
+                writer.println((i / 2 + 1) + " file, HCD:");
+                writer.println(lightChain);
+                printFoundMatches(writer, lightChainCoverages.get(i));
+                writer.println();
+                writer.println((i / 2 + 1) + " file, CID:");
+                writer.println(lightChain);
+                printFoundMatches(writer, lightChainCoverages.get(i + 1));
+                writer.println();
+            }
+            System.out.println();
+            for (int i = 0; i < heavyChainCoverages.size(); i += 2) {
+                System.out.print((i / 2 + 1) + " file, HCD: ");
+                System.out.println(highlightCoverage(getCoverage(heavyChainCoverages.get(i), heavyChain.length()), heavyChain));
+                System.out.print((i / 2 + 1) + " file, CID: ");
+                System.out.println(highlightCoverage(getCoverage(heavyChainCoverages.get(i + 1), heavyChain.length()), heavyChain));
+
+                writer.println((i / 2 + 1) + " file, HCD:");
+                writer.println(heavyChain);
+                printFoundMatches(writer, heavyChainCoverages.get(i));
+                writer.println();
+                writer.println((i / 2 + 1) + " file, CID:");
+                writer.println(heavyChain);
+                printFoundMatches(writer, heavyChainCoverages.get(i + 1));
+                writer.println();
+            }
+            System.out.println();
+
+
+            List<Set<String>> correctHcd20 = new ArrayList<>();
+            for (int i = 0; i < Bioinf.peptide.size(); i++) {
+                correctHcd20.add(Bioinf.peptide.get(i).stream().filter(s -> !s.getSequences().isEmpty() && s.getActivation().equals(HCD))
+                        .flatMap(s -> s.getSequences().stream().limit(20)).map(Sequence::getSequence)
+                        .filter(s -> !isSubstring(lightChain, s).isEmpty() || !isSubstring(heavyChain, s).isEmpty()).collect(Collectors.toSet()));
+            }
+            List<Set<String>> correctHcd2 = new ArrayList<>();
+            for (int i = 0; i < Bioinf.peptide.size(); i++) {
+                correctHcd2.add(Bioinf.peptide.get(i).stream().filter(s -> !s.getSequences().isEmpty() && s.getActivation().equals(HCD))
+                        .flatMap(s -> s.getSequences().stream().limit(2)).map(Sequence::getSequence)
+                        .filter(s -> !isSubstring(lightChain, s).isEmpty() || !isSubstring(heavyChain, s).isEmpty()).collect(Collectors.toSet()));
+            }
+            writer.println();
+            printPeptidesLengthStat(writer, correctHcd20, correctHcd2);
+        }
+    }
+
+    private static void printPeptidesLengthStat(@NotNull PrintWriter out, @NotNull List<Set<String>> peptide20, @NotNull List<Set<String>> peptide2) {
+        List<Set<String>> uniquePeptide20 = getUnique(peptide20);
+        List<Set<String>> uniquePeptide2 = getUnique(peptide2);
+/*
+        for (Set<Scan> aPeptide : peptide) {
+            peptide20.add(aPeptide.stream().filter(s -> s.getActivation().equals(HCD))
+                    .flatMap(s -> s.getSequences().stream().limit(20)).map(Sequence::getSequence).collect(Collectors.toList()));
+            peptide2.add(aPeptide.stream().filter(s -> s.getActivation().equals(HCD))
+                    .flatMap(s -> s.getSequences().stream().limit(2)).map(Sequence::getSequence).collect(Collectors.toList()));
+        }
+*/
+        List<String> longest2 = new ArrayList<>();
+        List<String> longest20 = new ArrayList<>();
+        for (int i = 0; i < peptide.size(); i++) {
+            int j = i;
+            out.println((i + 1) + " file, 20 interpretations, longest:");
+            uniquePeptide20.get(i).stream().sorted(Comparator.comparingInt(String::length).reversed()).limit(3).peek(out::println).filter(s -> j == 0).forEach(longest20::add);
+            out.println((i + 1) + " file, 20 interpretations, shortest:");
+            uniquePeptide20.get(i).stream().sorted(Comparator.comparingInt(String::length)).limit(3).forEach(out::println);
+            out.print((i + 1) + " file, 20 interpretations, average: ");
+            out.println(uniquePeptide20.get(i).stream().mapToInt(String::length).average().orElse(0));
+            out.println();
+
+            out.println((i + 1) + " file, 2 interpretations, longest:");
+            uniquePeptide2.get(i).stream().sorted(Comparator.comparingInt(String::length).reversed()).limit(3).peek(out::println).filter(s -> j == 0).forEach(longest2::add);
+            out.println((i + 1) + " file, 2 interpretations, shortest:");
+            uniquePeptide2.get(i).stream().sorted(Comparator.comparingInt(String::length)).limit(3).forEach(out::println);
+            out.print((i + 1) + " file, 2 interpretations, average: ");
+            out.println(uniquePeptide2.get(i).stream().mapToInt(String::length).average().orElse(0));
+            out.println();
+        }
+
+        for(String longest : longest2) {
+            out.println("2 interpretations, 2 file coverage:");
+            coverWithPeptideFormSet(out, longest, uniquePeptide2.get(1));
+            out.println("2 interpretations, 3 file coverage:");
+            coverWithPeptideFormSet(out, longest, uniquePeptide2.get(2));
+        }
+
+        for(String longest : longest20) {
+            out.println("20 interpretations, 2 file coverage:");
+            coverWithPeptideFormSet(out, longest, uniquePeptide20.get(1));
+            out.println("20 interpretations, 3 file coverage:");
+            coverWithPeptideFormSet(out, longest, uniquePeptide20.get(2));
+        }
+    }
+
+    private static void coverWithPeptideFormSet(PrintWriter out, String longest, Set<String> strings) {
+        List<Integer> lightPos = isSubstring(lightChain, longest);
+        List<Integer> heavyPos = isSubstring(heavyChain, longest);
+
+        Bag<Pair<Integer, String>> lightCover = new TreeBag<>(Comparator.comparing(Pair::getKey));
+        Bag<Pair<Integer, String>> heavyCover = new TreeBag<>(Comparator.comparing(Pair::getKey));
+        for(String sequence : strings) {
+            List<Integer> positions = isSubstring(lightChain, sequence);
+            if (isIntersect(lightPos, longest, positions, sequence)) {
+                for (int position : positions) {
+                    lightCover.add(new Pair<>(position, sequence));
+                }
+            }
+
+            positions = isSubstring(heavyChain, sequence);
+            if (isIntersect(heavyPos, longest, positions, sequence)) {
+                for (int position : positions) {
+                    heavyCover.add(new Pair<>(position, sequence));
+                }
+            }
+        }
+
+        if (lightPos.size() != 0) {
+            out.println(lightChain);
+            printWhitespaces(out, lightPos.get(0));
+            out.println(longest);
+            printFoundMatches(out, lightCover);
+        }
+
+        if (heavyPos.size() != 0) {
+            out.println(heavyChain);
+            printWhitespaces(out, heavyPos.get(0));
+            out.println(longest);
+            printFoundMatches(out, heavyCover);
+        }
+
+        out.println();
+    }
+
+    private static boolean isIntersect(List<Integer> pos1, String seq1, List<Integer> pos2, String seq2) {
+        boolean res = false;
+
+        for(int i : pos1) {
+            for(int j : pos2) {
+                res |= i <= j && i + seq1.length() > j;
+                res |= i < j + seq2.length() && i + seq1.length() >= j + seq2.length();
+                res |= i >= j && i + seq1.length() <= j + seq2.length();
+                }
+        }
+
+        return res;
+    }
+
+
+    private static List<Set<String>> getUnique(List<Set<String>> notUnique) {
+        List<Set<String>> res = new ArrayList<>();
+        for (int i = 0; i < notUnique.size(); i++) {
+            Set<String> union = new HashSet<>();
+            for (int j = 0; j < notUnique.size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+                union = Sets.union(union, notUnique.get(j));
+            }
+            res.add(Sets.difference(notUnique.get(i), union));
+        }
+
+        return res;
+    }
+
+    private static Bag<Pair<Integer, String>> getAppearancesFromSet(Set<String> set, String chain) {
+        Bag<Pair<Integer, String>> appearances = new TreeBag<>(Comparator.comparing(Pair::getKey));
+
+        for (String sequence : set) {
+            List<Integer> positions = isSubstring(chain, sequence);
+            if (!positions.isEmpty()) {
+                for (int position : positions) {
+                    appearances.add(new Pair<>(position, sequence));
+                }
+            }
+        }
+
+        return appearances;/*
+        BitSet coverage = getCoverage(appearances, chain.length());
+        return highlightCoverage(coverage, chain);*/
+    }
+
+    private static void savePeptide() {
+        peptide.add(new HashSet<>(scans.values()));
     }
 
     @NotNull
@@ -116,7 +355,7 @@ public class Bioinf {
         int hcdScans = 0;
         int cidScans = 0;
         for (Scan scan : scans.values()) {
-            if (scan.getActivation().equals(Activation.CID)) {
+            if (scan.getActivation().equals(CID)) {
                 cidScans++;
             } else {
                 hcdScans++;
@@ -124,13 +363,13 @@ public class Bioinf {
             for (int i = 0; i < Math.min(numberOfInterpretations + 1, scan.getSequences().size()); i++) {
                 Sequence sequence = scan.getSequences().get(i);
                 if (!isSubstring(lightChain, sequence.getSequence()).isEmpty()) {
-                    if (scan.getActivation().equals(Activation.HCD)) {
+                    if (scan.getActivation().equals(HCD)) {
                         hcdCorrectInterpretations++;
                     } else {
                         cidCorrectInterpretations++;
                     }
                 } else if (!isSubstring(heavyChain, sequence.getSequence()).isEmpty()) {
-                    if (scan.getActivation().equals(Activation.HCD)) {
+                    if (scan.getActivation().equals(HCD)) {
                         hcdCorrectInterpretations++;
                     } else {
                         cidCorrectInterpretations++;
@@ -145,42 +384,31 @@ public class Bioinf {
                 + "% of correct first interpretations");
     }
 
-    private static Coverage printMatches(PrintWriter out, int numberOfCidTries, int numberOfHcdTries) {
-        Bag<Pair<Integer, String>> hcdLightChain = new TreeBag<>(Comparator.comparing(Pair::getKey));
-        Bag<Pair<Integer, String>> hcdHeavyChain = new TreeBag<>(Comparator.comparing(Pair::getKey));
-        Bag<Pair<Integer, String>> cidLightChain = new TreeBag<>(Comparator.comparing(Pair::getKey));
-        Bag<Pair<Integer, String>> cidHeavyChain = new TreeBag<>(Comparator.comparing(Pair::getKey));
+    @NotNull
+    private static Bag<Pair<Integer, String>> getAppearances(@NotNull String chain, @NotNull Activation activation, int numberOfTries) {
+        Bag<Pair<Integer, String>> appearances = new TreeBag<>(Comparator.comparing(Pair::getKey));
 
         for (Scan scan : scans.values()) {
-            int numberOfTries = scan.getActivation() == Activation.CID ? numberOfCidTries : numberOfHcdTries;
             for (int i = 0; i < Math.min(numberOfTries + 1, scan.getSequences().size()); i++) {
                 Sequence sequence = scan.getSequences().get(i);
-                List<Integer> positions = isSubstring(lightChain, sequence.getSequence());
-                if (!positions.isEmpty()) {
-                    if (scan.getActivation().equals(Activation.HCD)) {
-                        for (int position : positions) {
-                            hcdLightChain.add(new Pair<>(position, sequence.getSequence()));
-                        }
-                    } else {
-                        for (int position : positions) {
-                            cidLightChain.add(new Pair<>(position, sequence.getSequence()));
-                        }
-                    }
-                }
-                positions = isSubstring(heavyChain, sequence.getSequence());
-                if (!positions.isEmpty()) {
-                    if (scan.getActivation().equals(Activation.HCD)) {
-                        for (int position : positions) {
-                            hcdHeavyChain.add(new Pair<>(position, sequence.getSequence()));
-                        }
-                    } else {
-                        for (int position : positions) {
-                            cidHeavyChain.add(new Pair<>(position, sequence.getSequence()));
-                        }
+                List<Integer> positions = isSubstring(chain, sequence.getSequence());
+                if (!positions.isEmpty() && scan.getActivation().equals(activation)) {
+                    for (int position : positions) {
+                        appearances.add(new Pair<>(position, sequence.getSequence()));
                     }
                 }
             }
         }
+
+        return appearances;
+    }
+
+    @NotNull
+    private static Coverage printMatches(PrintWriter out, int numberOfCidTries, int numberOfHcdTries) {
+        Bag<Pair<Integer, String>> hcdLightChain = getAppearances(lightChain, HCD, numberOfHcdTries);
+        Bag<Pair<Integer, String>> hcdHeavyChain = getAppearances(heavyChain, HCD, numberOfHcdTries);
+        Bag<Pair<Integer, String>> cidLightChain = getAppearances(lightChain, CID, numberOfCidTries);
+        Bag<Pair<Integer, String>> cidHeavyChain = getAppearances(heavyChain, CID, numberOfCidTries);
 
         BitSet coverage = getCoverage(hcdLightChain, lightChain.length());
         String hcdLightChainCoverage = highlightCoverage(coverage, lightChain);
@@ -217,14 +445,15 @@ public class Bioinf {
         return new Coverage(hcdHeavyChainCoverage, cidHeavyChainCoverage, hcdLightChainCoverage, cidLightChainCoverage);
     }
 
-    private static String highlightCoverage(BitSet coverage, String lightChain) {
+    @NotNull
+    private static String highlightCoverage(BitSet coverage, String chain) {
         StringBuilder highlighted = new StringBuilder();
 
-        for (int i = 0; i < lightChain.length(); i++) {
-            if(coverage.get(i)) {
-                highlighted.append(ConsoleColors.GREEN).append(lightChain.charAt(i)).append(ConsoleColors.RESET);
+        for (int i = 0; i < chain.length(); i++) {
+            if (coverage.get(i)) {
+                highlighted.append(ConsoleColors.GREEN).append(chain.charAt(i)).append(ConsoleColors.RESET);
             } else {
-                highlighted.append(lightChain.charAt(i));
+                highlighted.append(chain.charAt(i));
             }
         }
 
@@ -271,12 +500,6 @@ public class Bioinf {
                     }
                 }
             }
-        }
-    }
-
-    private static void printList(@NotNull PrintWriter out, @NotNull List<String> list) {
-        for (String string : list) {
-            out.println(string);
         }
     }
 
@@ -361,7 +584,7 @@ public class Bioinf {
         scans.get(num).setPrecursorMass(mass);
 
         Scan pair = scans.get(num - 1);
-        if (pair != null && Math.abs(pair.getPrecursorMass() - mass) <= epsilon) {
+        if (pair != null && Math.abs(pair.getPrecursorMass() - mass) <= EPSILON) {
             pairs.add(new Pair<>(pair, scans.get(num)));
         }
     }
@@ -390,6 +613,7 @@ public class Bioinf {
         return ans;
     }
 
+    @NotNull
     private static BitSet getCoverage(@NotNull Bag<Pair<Integer, String>> matches, int stringLength) {
         BitSet covered = new BitSet(stringLength);
 
